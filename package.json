@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
-    "@quixo3/prisma-session-store": "^3.1.13"
+    "@quixo3/prisma-session-store": "^3.1.13",
+    "bcrypt": "^5.1.1"
   }
 }
