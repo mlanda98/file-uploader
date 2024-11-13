@@ -21,12 +21,14 @@ app.use(session)({
     prisma,
     {
       checkPeriod: 2 * 60 * 1000,
-      dbRecordIdFunction: true,
-      dbRecordIdFunction: undefined,
+      dbRecordIdIsSessionId: true,
     }
   ),
   cookie: {secret: false}
 })
+
+app.use(passport.initialize());
+app.use(passport.session());
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
 });
