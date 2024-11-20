@@ -35,6 +35,16 @@ router.post("/register", async (req, res) => {
 router.get("/register", (req, res) => {
   res.render("register");
 })
+
+router.get("/login", (req, res) => {
+  res.render("login");
+})
+
+router.post("/login", passport.authenticate("local", {
+  successRedirect: "dashboard,",
+  failureRedirect: "/login"
+}));
+
 router.post("/logout", (req, res) => {
   req.logout((err) => {
     if (err){
