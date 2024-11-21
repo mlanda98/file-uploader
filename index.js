@@ -8,6 +8,9 @@ const { PrismaClient } = require("@prisma/client");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const authRoutes = require("./routes/auth");
 const dashboardRoutes = require("./routes/dashboard");
+const folderRoutes = require("./routes/folders");
+const fileRoutes = require("./routes/files");
+
 const app = express();
 const prisma = new PrismaClient();
 
@@ -66,6 +69,9 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use("/folders", folderRoutes);
+app.use("/files", fileRoutes);
 
 app.use("/", authRoutes);
 app.set("view engine", "ejs");
