@@ -2,20 +2,23 @@ const express = require("express");
 const upload = require("../multer");
 const router = express.Router();
 const ensureAuthenticated = require("./auth")
-const prisma = require("@prisma/client");
+const { PrismaClient} = require("@prisma/client");
+const prisma = new PrismaClient();
 
 router.get("/", ensureAuthenticated, async (req, res) => {
   try{
-    const folders = await prisma.folders.findMany({
+    const folders = await prisma.folder.findMany({
       where: { userId: req.user.id },
       include: { files: true },
     });
+    console.log(folders);
 
     const filesWithoutFolder = await prisma.file.findMany({
       where: { userId: req.user.id, folderId: null },
     });
+    console.log(filesWithoutFolder);
 
-    res.render("dashboard", { user: req.user, folders, filesWithoutFolder })
+    res.render("dashboard", { user: req.user, folders, filesWithoutFolder });
   } catch(err){
     console.error(err);
     res.status(500).send("Error loading dashboard");

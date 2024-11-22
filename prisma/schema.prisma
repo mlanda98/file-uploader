@@ -10,6 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  
   url      = env("DATABASE_URL")
 }
 
@@ -17,6 +18,8 @@ model User {
   id       Int    @id @default(autoincrement())
   username String @unique
   password String
+  folders Folder[]
+  files File[]
 }
 
 model Session {
@@ -32,13 +35,18 @@ model Folder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   files File[]
+  userId Int
+  user User @relation(fields: [userId], references: [id])
 }
 
 model File {
   id Int @id @default(autoincrement())
   name String
   path String
-  folderId Int
-  folder Folder @relation(fields: [folderId], references: [id])
+  folderId Int?
+  folder Folder? @relation(fields: [folderId], references: [id])
   createdAt DateTime @default(now())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
 }
+
