@@ -8,8 +8,10 @@ const { PrismaClient } = require("@prisma/client");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const authRoutes = require("./routes/auth");
 const dashboardRoutes = require("./routes/dashboard");
+const path = require("path");
 const folderRoutes = require("./routes/folders");
 const fileRoutes = require("./routes/files");
+
 
 const app = express();
 const prisma = new PrismaClient();
@@ -77,7 +79,7 @@ app.use("/", authRoutes);
 app.set("view engine", "ejs");
 
 app.use("/dashboard", dashboardRoutes);
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.listen(3000, () => {
   console.log("Server is running on http://localhost:3000");
 });

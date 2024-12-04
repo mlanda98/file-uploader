@@ -25,7 +25,10 @@ router.get("/", ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.post("/upload", ensureAuthenticated, upload.single("file"), async (req,res) => {
+router.post("/:folderId/upload", ensureAuthenticated, upload.single("file"), async (req,res) => {
+  const folderId = req.params.folderId;
+  console.log("Folder ID:", folderId);
+
   if (!req.file){
     return res.status(400).send("No file uploaded or invalid file type");
   }
@@ -35,6 +38,9 @@ router.post("/upload", ensureAuthenticated, upload.single("file"), async (req,re
         filename: req.file.filename, 
         originalName: req.file.originalname,
         userId: req.user.id,
+        folderId: folderId ? parseInt(folderId) : null,
+        path: `/uploads/${req.file.filename}`,
+        size: req.file.size,
       },
     });
     res.redirect("/dashboard");

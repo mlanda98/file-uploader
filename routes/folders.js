@@ -3,7 +3,7 @@ const {PrismaClient} = require("@prisma/client");
 const router = expires.Router();
 const prisma = new PrismaClient();
 
-router.post("/folders", async (req, res) => {
+router.post("/", async (req, res) => {
   const { name } = req.body;
   try {
     const folder = await prisma.folder.create({
@@ -15,7 +15,7 @@ router.post("/folders", async (req, res) => {
   }
 })
 
-router.get("/folders", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const folders = await prisma.folder.findMany({
       include: {files: true},
@@ -26,7 +26,7 @@ router.get("/folders", async (req, res) => {
   }
 })
 
-router.put("/folders/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
   try{
@@ -40,7 +40,7 @@ router.put("/folders/:id", async (req, res) => {
   }
 })
 
-router.delete("/folders/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   try{
     await prisma.folder.delete({
