@@ -33,7 +33,20 @@
             Delete Folder
           </button>
         </form>
-
+        <form
+          action="/folders/folder/<%= folder.id %>/update?_method=PUT"
+          method="post"
+        >
+          <label for="folderName">New Folder Name:</label>
+          <input
+            type="text"
+            id="folderName"
+            name="name"
+            value="<%= folder.name %>"
+            required
+          />
+          <button type="submit">Update Folder</button>
+        </form>
         <form
           action="/dashboard/<%= folder.id %>/upload"
           method="POST"

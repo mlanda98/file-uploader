@@ -29,15 +29,18 @@ router.get("/", ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.put("/:id", ensureAuthenticated, async (req, res) => {
+router.put("/folder/:id/update", ensureAuthenticated, async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
+
+  console.log("Received folder name:", name);
   try {
-    const folder = await prisma.folder.update({
+    const updateFolder = await prisma.folder.update({
       where: { id: parseInt(id) },
       data: { name },
     });
-    res.json(folder);
+    console.log(`Folder updated: ${updateFolder.name}`);
+    res.redirect(`/dashboard`);
   } catch (error) {
     res.status(500).json({ error: "Error updating folder" });
   }
