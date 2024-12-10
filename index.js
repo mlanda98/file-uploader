@@ -1,4 +1,5 @@
 require("dotenv").config();
+const methodOverride = require("method-override");
 const express = require("express");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
@@ -17,8 +18,8 @@ const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 app.use(express.json());
-
 console.log("session secret:", process.env.SESSION_SECRET);
 
 passport.use(
@@ -80,6 +81,17 @@ app.set("view engine", "ejs");
 
 app.use("/dashboard", dashboardRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
+app._router.stack.forEach((middleware) => {
+  if (middleware.route) {
+    console.log(middleware.route.path, middleware.route.methods);
+  }
+});
+
+
 app.listen(3000, () => {
   console.log("Server is running on http://localhost:3000");
 });
