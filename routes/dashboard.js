@@ -13,12 +13,7 @@ router.get("/", ensureAuthenticated, async (req, res) => {
     });
     console.log(folders);
 
-    const filesWithoutFolder = await prisma.file.findMany({
-      where: { userId: req.user.id, folderId: null },
-    });
-    console.log(filesWithoutFolder);
-
-    res.render("dashboard", { user: req.user, folders, filesWithoutFolder });
+    res.render("dashboard", { user: req.user, folders });
   } catch(err){
     console.error(err);
     res.status(500).send("Error loading dashboard");

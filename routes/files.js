@@ -6,7 +6,6 @@ const fs = require("fs");
 const path = require("path");
 const prisma = new PrismaClient();
 
-
 router.post("/:folderId/files", multer.single("file"), async (req, res) => {
   const { folderId } = req.params;
   console.log("Folder ID:", folderId); // Check folderId
@@ -56,14 +55,16 @@ router.delete("/file/:fileId/delete", async (req, res) => {
       where: { id: parseInt(fileId) },
     });
 
-
-    if (!file){
+    if (!file) {
       console.log("File not found");
-      return res.status(404).json({error: "file not found"});
+      return res.status(404).json({ error: "file not found" });
     }
-    const filePath = path.join(__dirname, `../uploads/${file.folderId}/${file.filename}`);
+    const filePath = path.join(
+      __dirname,
+      `../uploads/${file.folderId}/${file.filename}`
+    );
     console.log(`File path for deletion: ${filePath}`);
-    
+
     await new Promise((resolve, reject) => {
       fs.unlink(filePath, (err) => {
         if (err) {
@@ -75,20 +76,22 @@ router.delete("/file/:fileId/delete", async (req, res) => {
         }
       });
     });
-    
+
     await prisma.file.delete({
       where: { id: parseInt(fileId) },
     });
     console.log("File deleted from database");
     res.redirect(`/dashboard`);
-   } catch (error){
+  } catch (error) {
     console.error("Error deleting file:", error);
-    res.status(500).json({error: "Error deleting file: ${error.message"});
+    res.status(500).json({ error: "Error deleting file: ${error.message" });
   }
 });
 
-router.get("/files/:fileId/details", async (req, res) => {
+router.get("/file/:fileId/details", async (req, res) => {
+  console.log("accessing file details route");
   const { fileId } = req.params;
+  console.log(fileId);
 
   try {
     const file = await prisma.file.findUnique({
