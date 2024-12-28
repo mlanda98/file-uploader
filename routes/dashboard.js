@@ -1,64 +1,100 @@
 const express = require("express");
-const upload = require("../multer");
+const { uploadToDisk } = require("../multer");
 const router = express.Router();
-const ensureAuthenticated = require("./auth")
-const { PrismaClient} = require("@prisma/client");
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const { createClient } = require("@supabase/supabase-js");
+const fs = require("fs");
+const path = require("path");
 
-router.get("/", ensureAuthenticated, async (req, res) => {
-  try{
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+router.get("/", async (req, res) => {
+  try {
     const folders = await prisma.folder.findMany({
       where: { userId: req.user.id },
       include: { files: true },
     });
-    console.log(folders);
+
+    folders.forEach((folder) => {
+      folder.files.forEach((file) => {
+        file.url = supabase.storage
+          .from("uploads")
+          .getPublicUrl(file.path).publicURL;
+      });
+    });
 
     res.render("dashboard", { user: req.user, folders });
-  } catch(err){
+  } catch (err) {
     console.error(err);
     res.status(500).send("Error loading dashboard");
   }
 });
 
-router.post("/:folderId/upload", ensureAuthenticated, upload.single("file"), async (req,res) => {
-  const folderId = req.params.folderId;
-  console.log("Folder ID:", folderId);
+router.post(
+  "/:folderId/upload",
+  uploadToDisk.single("file"),
+  async (req, res) => {
+    const folderId = req.params.folderId;
+    console.log("Folder ID:", folderId);
 
-  if (!req.file){
-    return res.status(400).send("No file uploaded or invalid file type");
-  }
-  try{
-    await prisma.file.create({
-      data: {
-        filename: req.file.filename, 
-        originalName: req.file.originalname,
-        userId: req.user.id,
-        folderId: folderId ? parseInt(folderId) : null,
-        path: `/uploads/${req.file.filename}`,
-        size: req.file.size,
-      },
-    });
-    res.redirect("/dashboard");
-  } catch(err){
-    console.error(err);
-    res.status(500).send("Error uploading file");
-  }
-});
+    if (!req.file) {
+      return res.status(400).send("No file uploaded or invalid file type");
+    }
+    try {
+      const fileBuffer = fs.readFileSync(req.file.path);
 
-router.post("/create-folder", ensureAuthenticated, async (req, res) => {
+      const { data, error } = await supabase.storage
+        .from("uploads")
+        .upload(
+          `${req.user.id}/${folderId}/${req.file.originalname}`,
+          fileBuffer,
+          {
+            contentType: req.file.mimetype,
+          }
+        );
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      await prisma.file.create({
+        data: {
+          filename: req.file.filename,
+          originalName: req.file.originalname,
+          userId: req.user.id,
+          folderId: parseInt(folderId),
+          path: data.path,
+          size: req.file.size,
+        },
+      });
+
+      fs.unlinkSync(req.file.path);
+
+      res.redirect("/dashboard");
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Error uploading file");
+    }
+  }
+);
+
+router.post("/create-folder", async (req, res) => {
   const { folderName } = req.body;
-  if (!folderName){
+  if (!folderName) {
     return res.status(400).send("Folder name is required");
   }
-  try{
+  try {
     await prisma.folder.create({
-      data: { name: folderName, userId: req.user.id }
+      data: { name: folderName, userId: req.user.id },
     });
     res.redirect("/dashboard");
-  } catch (err){
+  } catch (err) {
     console.error(err);
     res.status(500).send("Error creating folder");
   }
-})
+});
 module.exports = router;
-

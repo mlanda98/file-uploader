@@ -1,15 +1,22 @@
+require("dotenv").config();
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
+const { createClient } = require("@supabase/supabase-js");
+const fs = require("fs");
+const path = require("path");
 const router = express.Router();
 const prisma = new PrismaClient();
-const ensureAuthenticated = require("./auth");
 
-router.post("/", ensureAuthenticated, async (req, res) => {
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+router.post("/", async (req, res) => {
   const { name } = req.body;
   try {
     const folder = await prisma.folder.create({
-      data: { name, userId: req.user.id,
-      },
+      data: { name, userId: req.user.id },
     });
     res.status(201).json(folder);
   } catch (error) {
@@ -17,10 +24,10 @@ router.post("/", ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.get("/", ensureAuthenticated, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const folders = await prisma.folder.findMany({
-      where: { userId: req.user.id},
+      where: { userId: req.user.id },
       include: { files: true },
     });
     res.json(folders);
@@ -29,26 +36,23 @@ router.get("/", ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.put("/folder/:id/update", ensureAuthenticated, async (req, res) => {
+router.put("/folder/:id/update", async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
 
-  console.log("Received folder name:", name);
   try {
-    const updateFolder = await prisma.folder.update({
+    await prisma.folder.update({
       where: { id: parseInt(id) },
       data: { name },
     });
-    console.log(`Folder updated: ${updateFolder.name}`);
     res.redirect(`/dashboard`);
   } catch (error) {
     res.status(500).json({ error: "Error updating folder" });
   }
 });
 
-router.delete("/folder/:id/delete", ensureAuthenticated, async (req, res) => {
+router.delete("/folder/:id/delete", async (req, res) => {
   const { id } = req.params;
-  console.log(`Delete request received for folder ID:, ${id}`);
 
   try {
     const folder = await prisma.folder.findUnique({
@@ -62,10 +66,12 @@ router.delete("/folder/:id/delete", ensureAuthenticated, async (req, res) => {
       return res.status(404).json({ error: "folder not found" });
     }
 
-    console.log("Deleting files associated with folder");
+    const filePaths = folder.files.map((file) => file.path);
+    const { error } = await supabase.storage.from("uploads").remove(filePaths);
+
     await prisma.file.deleteMany({
       where: { folderId: parseInt(id) },
-    }); 
+    });
     console.log("Files deleted");
 
     await prisma.folder.delete({

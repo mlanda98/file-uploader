@@ -45,12 +45,11 @@ router.post("/login", passport.authenticate("local", {
   failureRedirect: "/login"
 }));
 
-router.post("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err){
-      return res.status(500).send("An error occurred during logout")
+router.post("/logout", (req, res, next) => {
+    req.logout((err) => {
+      if (err) {return next(err);
     }
-  res.redirect("/login");
+    res.redirect("/login");
   });
 });
 
