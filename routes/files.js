@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const router = express.Router();
-const {uploadToDisk} = require("../multer");
+const { uploadToDisk } = require("../multer");
 const path = require("path");
 const prisma = new PrismaClient();
 const { createClient } = require("@supabase/supabase-js");
@@ -13,51 +13,58 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-router.post("/:folderId/files", uploadToDisk.single("file"), async (req, res) => {
-  const { folderId } = req.params;
-  console.log("Folder ID:", folderId); // Check folderId
-  console.log("Uploaded file:", req.file); // Check uploaded file
+router.post(
+  "/:folderId/files",
+  uploadToDisk.single("file"),
+  async (req, res) => {
+    const { folderId } = req.params;
+    console.log("Folder ID:", folderId); // Check folderId
+    console.log("Uploaded file:", req.file); // Check uploaded file
 
-  if (!req.file) {
-    return res
-      .status(400)
-      .send({ error: "No file uploaded or invalid file type" });
-  }
-  
-  const filePath = req.file.path;
-
-  try {
-     const fileBuffer = fs.readFileSync(filePath);
-
-    const { data, error } = await supabase.storage
-      .from("uploads")
-      .upload(`${req.user.id}/${folderId}/${req.file.originalname}`, fileBuffer, {
-        contentType: req.file.mimetype,
-      });
-
-    if (error) {
-      console.error("error uploading to supabase:", error.message);
-      return res.status(500).send({ error: "Error uploading to Supabase" });
+    if (!req.file) {
+      return res
+        .status(400)
+        .send({ error: "No file uploaded or invalid file type" });
     }
 
-    const file = await prisma.file.create({
-      data: {
-        name: req.file.originalname,
-        path: data.path,
-        userId: req.user.id,
-        size: req.file.size,
-        folderId: parseInt(folderId),
-      },
-    });
+    const filePath = req.file.path;
 
-    fs.unlinkSync(filePath);
+    try {
+      const fileBuffer = fs.readFileSync(filePath);
 
-    res.redirect("/dashboard");
-  } catch (error) {
-    console.error("Error saving file details:", error.message);
-    res.status(500).json({ error: "Error fetching file details" });
+      const fileSupabasePath = `${req.user.id}/${folderId}/${req.file.filename}`;
+
+      const { data, error } = await supabase.storage
+        .from("uploads")
+        .upload(fileSupabasePath, fileBuffer, {
+          contentType: req.file.mimetype,
+        });
+
+      if (error) {
+        console.error("error uploading to supabase:", error.message);
+        return res.status(500).send({ error: "Error uploading to Supabase" });
+      }
+
+      const file = await prisma.file.create({
+        data: {
+          filename: req.file.filename,
+          originalName: req.file.originalname,
+          path: fileSupabasePath,
+          userId: req.user.id,
+          size: req.file.size,
+          folderId: parseInt(folderId),
+        },
+      });
+
+      fs.unlinkSync(filePath);
+
+      res.redirect("/dashboard");
+    } catch (error) {
+      console.error("Error saving file details:", error.message);
+      res.status(500).json({ error: "Error fetching file details" });
+    }
   }
-});
+);
 
 router.get("/:folderId/files", async (req, res) => {
   const { folderId } = req.params;
@@ -69,7 +76,7 @@ router.get("/:folderId/files", async (req, res) => {
     const filesWithUrls = files.map((file) => {
       const { data, error } = supabase.storage
         .from("uploads")
-        .getPublicUrl(`${req.user.id}/${file.folderId}/${file.filename}`);
+        .getPublicUrl(file.path);
 
       return {
         ...file,
@@ -130,18 +137,19 @@ router.get("/file/:fileId/details", async (req, res) => {
       return res.status(404).send("File not found");
     }
 
-    const { data, error } = await supabase.storage
+    const { data } = supabase.storage
       .from("uploads")
-      .createSignedUrl(`${req.user.id}/${file.folderId}/${file.filename}`, 60);
-  
-    if (error) {
-      console.error(
-        "Error generating signed URL:",
-        error.message
-      );
-      return res.status(500).send("Error generating download link");
+      .getPublicUrl(file.path);
+
+      const publicUrl = data?.publicUrl;
+
+    if (!publicUrl) {
+      return res.status(500).send("Error generating url");
     }
-    res.render("fileDetails", { file, signedUrl: data.signedUrl });
+
+    console.log("generated public url", publicUrl);
+
+    res.render("fileDetails", { file, publicUrl });
   } catch (error) {
     console.error(error);
     res.status(500).send("Error fetching file details");
@@ -160,24 +168,23 @@ router.get("/file/:fileId/download", async (req, res) => {
       return res.status(404).send("File not found");
     }
 
-    const { data, error } = supabase.storage
+    const { data: publicUrlData, error} = supabase.storage
       .from("uploads")
       .getPublicUrl(file.path);
 
     if (error) {
-      return res.status(500).send("Error retrieving file from Supabase");
+      console.log(error.message);
+      return res.status(500).send("Error generating url");
     }
 
-    if (!data.publicUrl){
-      return res.status(500).send("no public URL generated");
-    }
+    const publicUrl = publicUrlData.publicUrl;
 
-    res.redirect(data.publicUrl);
+    console.log("generated public url", publicUrl);
+    res.redirect(publicUrl);
   } catch (error) {
     console.error(error);
     res.status(500).send("Error downloading file");
   }
 });
-
 
 module.exports = router;

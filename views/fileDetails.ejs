@@ -12,7 +12,7 @@
   <p><strong>Uploaded At:</strong> <%= new Date(file.createdAt).toLocaleString() %></p>
 
   <h2>Actions</h2>
-  <a href="<%= signedUrl %>" download="<%= file.originalName %>">
+  <a href="<%= publicUrl %>" download="<%= file.originalName %>">
     <button>Download</button>
   </a>
     <br><br>
