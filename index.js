@@ -13,16 +13,15 @@ const path = require("path");
 const folderRoutes = require("./routes/folders");
 const fileRoutes = require("./routes/files");
 
-
 const app = express();
 const prisma = new PrismaClient();
 
-app.use(((req, res, next) => {
-  if (req.originalUrl === "/favicon.ico"){
+app.use((req, res, next) => {
+  if (req.originalUrl === "/favicon.ico") {
     return res.status(204).end();
   }
   next();
-}))
+});
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
@@ -97,7 +96,6 @@ app._router.stack.forEach((middleware) => {
     console.log(middleware.route.path, middleware.route.methods);
   }
 });
-
 
 app.listen(3000, () => {
   console.log("Server is running on http://localhost:3000");
