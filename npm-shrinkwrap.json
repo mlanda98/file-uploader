@@ -7,6 +7,7 @@
     "": {
       "name": "file-uploader",
       "version": "1.0.0",
+      "hasInstallScript": true,
       "license": "ISC",
       "dependencies": {
         "@prisma/client": "^5.22.0",
@@ -19,9 +20,7 @@
         "method-override": "^3.0.0",
         "multer": "^1.4.5-lts.1",
         "passport": "^0.7.0",
-        "passport-local": "^1.0.0"
-      },
-      "devDependencies": {
+        "passport-local": "^1.0.0",
         "prisma": "^5.22.0"
       }
     },
@@ -82,12 +81,10 @@
     },
     "node_modules/@prisma/debug": {
       "version": "5.22.0",
-      "devOptional": true,
       "license": "Apache-2.0"
     },
     "node_modules/@prisma/engines": {
       "version": "5.22.0",
-      "devOptional": true,
       "hasInstallScript": true,
       "license": "Apache-2.0",
       "dependencies": {
@@ -99,12 +96,10 @@
     },
     "node_modules/@prisma/engines-version": {
       "version": "5.22.0-44.605197351a3c8bdd595af2d2a9bc3025bca48ea2",
-      "devOptional": true,
       "license": "Apache-2.0"
     },
     "node_modules/@prisma/fetch-engine": {
       "version": "5.22.0",
-      "devOptional": true,
       "license": "Apache-2.0",
       "dependencies": {
         "@prisma/debug": "5.22.0",
@@ -114,7 +109,6 @@
     },
     "node_modules/@prisma/get-platform": {
       "version": "5.22.0",
-      "devOptional": true,
       "license": "Apache-2.0",
       "dependencies": {
         "@prisma/debug": "5.22.0"
@@ -851,7 +845,6 @@
       "version": "2.3.3",
       "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
       "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==",
-      "dev": true,
       "hasInstallScript": true,
       "optional": true,
       "os": [
@@ -1470,7 +1463,6 @@
       "version": "5.22.0",
       "resolved": "https://registry.npmjs.org/prisma/-/prisma-5.22.0.tgz",
       "integrity": "sha512-vtpjW3XuYCSnMsNVBjLMNkTj6OZbudcPPTPYHqX0CJfpcdWciI1dM8uHETwmDxxiqEwCIE6WvXucWUetJgfu/A==",
-      "devOptional": true,
       "hasInstallScript": true,
       "dependencies": {
         "@prisma/engines": "5.22.0"
