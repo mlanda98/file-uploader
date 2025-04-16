@@ -82,7 +82,9 @@ app.use(passport.session());
 app.use("/folders", folderRoutes);
 app.use("/files", fileRoutes);
 
-app.use("/", authRoutes);
+app.use("/", (req, res) => {
+  res.redirect("/login")
+});
 app.set("view engine", "ejs");
 
 app.use("/dashboard", dashboardRoutes);
