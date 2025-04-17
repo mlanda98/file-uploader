@@ -64,6 +64,9 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
+app.set('trust proxy', 1); // Trust the first proxy (Railway)
+
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -79,7 +82,7 @@ app.use(
       },
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production" && req.secure,
       httpOnly: true,
       sameSite: "lax",
     },
