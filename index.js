@@ -51,15 +51,15 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    console.log("Deserializing user with ID:", id)
+    console.log("Deserializing user with ID:", id);
     const user = await prisma.user.findUnique({ where: { id } });
-    if (!user){
+    if (!user) {
       console.error("user not found during deserialization");
-      return done(null, false)
+      return done(null, false);
     }
     done(null, user);
   } catch (err) {
-    console.error("error in deserializeUser", err)
+    console.error("error in deserializeUser", err);
     done(err, null);
   }
 });
@@ -78,7 +78,11 @@ app.use(
         expires: "expires",
       },
     }),
-    cookie: { secure: false },
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: "strict",
+    },
   })
 );
 
@@ -92,9 +96,8 @@ app.get("/", (req, res) => {
 app.use("/folders", folderRoutes);
 app.use("/files", fileRoutes);
 
-
 app.set("view engine", "ejs");
-app.use("/", authRoutes)
+app.use("/", authRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use((req, res, next) => {
