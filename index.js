@@ -65,6 +65,7 @@ passport.deserializeUser(async (id, done) => {
 });
 
 
+app.set("trust proxy", 1);
 
 
 app.use(
@@ -82,7 +83,7 @@ app.use(
       },
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production" && req.secure,
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
       sameSite: "lax",
     },
