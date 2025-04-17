@@ -64,7 +64,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-app.set('trust proxy', 1); 
+
 
 
 app.use(
