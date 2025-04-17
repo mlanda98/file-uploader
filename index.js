@@ -79,9 +79,9 @@ app.use(
       },
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "lax",
     },
   })
 );
