@@ -37,7 +37,7 @@ router.get("/register", (req, res) => {
 });
 
 router.get("/login", (req, res) => {
-  res.send("login page");
+  res.render("login");
 });
 
 router.post(
