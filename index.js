@@ -79,14 +79,16 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.get("/", (req, res) => {
+  res.redirect("/register");
+});
+
 app.use("/folders", folderRoutes);
 app.use("/files", fileRoutes);
 
-app.use("/", (req, res) => {
-  res.redirect("/login")
-});
-app.set("view engine", "ejs");
 
+app.set("view engine", "ejs");
+app.use("/", authRoutes)
 app.use("/dashboard", dashboardRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use((req, res, next) => {
