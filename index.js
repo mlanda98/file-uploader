@@ -66,7 +66,13 @@ passport.deserializeUser(async (id, done) => {
 
 
 app.set("trust proxy", 1);
+const sessionStoreFields = {
+        id: "sid",
+        data: "data",
+        expires: "expires",
+      }
 
+console.log("using prismSessionStore with fields:", sessionStoreFields);
 
 app.use(
   session({
@@ -76,11 +82,8 @@ app.use(
     store: new PrismaSessionStore(prisma, {
       checkPeriod: 2 * 60 * 1000,
       dbRecordIdIsSessionId: false,
-      fields: {
-        id: "sid",
-        data: "data",
-        expires: "expires",
-      },
+      fields: sessionStoreFields,
+    
     }),
     cookie: {
       secure: process.env.NODE_ENV === "production",
