@@ -6,14 +6,24 @@ const prisma = new PrismaClient();
 const { createClient } = require("@supabase/supabase-js");
 const fs = require("fs");
 const path = require("path");
+const { isAscii } = require("buffer");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY,
 );
 
-router.get("/", async (req, res) => {
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/login");
+}
+
+router.get("/",isAuthenticated, async (req, res) => {
   try {
+    console.log("req.user:", req.user);
+
     const folders = await prisma.folder.findMany({
       where: { userId: req.user.id },
       include: { files: true },
