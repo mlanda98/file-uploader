@@ -66,13 +66,12 @@ passport.deserializeUser(async (id, done) => {
 
 
 app.set("trust proxy", 1);
-const sessionStoreFields = {
-        id: "sid",
-        data: "data",
-        expires: "expires",
-      }
+const originalCreate = prisma.session.create;
+prisma.session.create = (...args) => {
+  console.log("Creating session with data:", JSON.stringify(args, null, 2));
+  return originalCreate.apply(prisma.session, args);
+};
 
-console.log("using prismSessionStore with fields:", sessionStoreFields);
 
 app.use(
   session({
@@ -82,7 +81,11 @@ app.use(
     store: new PrismaSessionStore(prisma, {
       checkPeriod: 2 * 60 * 1000,
       dbRecordIdIsSessionId: false,
-      fields: sessionStoreFields,
+      fields: {
+        id: "sid",
+        data: "data",
+        expires: "expires",
+      },
     
     }),
     cookie: {
