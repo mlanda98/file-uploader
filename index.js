@@ -46,6 +46,7 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
+  console.log("serializing user:", user.id);
   done(null, user.id);
 });
 
@@ -80,7 +81,7 @@ app.use(
     
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       httpOnly: true,
       sameSite: "lax",
     },

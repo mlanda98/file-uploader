@@ -19,7 +19,7 @@ model Session {
   id      String   @id @default(uuid())
   sid     String   @unique
   data    String
-  expiresAt DateTime @default(now())
+  expiresAt DateTime 
 }
 
 model Folder {

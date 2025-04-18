@@ -40,24 +40,19 @@ router.get("/login", (req, res) => {
   res.render("login");
 });
 
-router.post("/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) return next(err);
-    if (!user) return res.redirect("/login");
-
-    req.logIn(user, (err) => {
-      if (err) return next(err);
-
-      req.session.save((err) => {
-        if (err) return next(err);
-        res.redirect("/dashboard");
-      });
+router.post(
+  "/login",
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureFlash: true,
+  }),
+  (req, res) => {
+    console.log("logged in:", req.user);
+    req.session.save(() => {
+      res.redirect("/dashboard");
     });
-  })(req, res, next);
-  console.log("logged in:", req.user);
-  console.log("Session at login:", req.session);
-
-});
+  }
+);
 
 router.post("/logout", (req, res, next) => {
   req.logout((err) => {
