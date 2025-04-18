@@ -48,14 +48,13 @@ router.post("/login", (req, res, next) => {
     req.logIn(user, (err) => {
       if (err) return next(err);
 
-      // Explicitly save session before redirecting
       req.session.save((err) => {
         if (err) return next(err);
         res.redirect("/dashboard");
       });
     });
   })(req, res, next);
-  console.log("User logged in:", req.user);
+  console.log("logged in:", req.user);
   console.log("Session at login:", req.session);
 
 });

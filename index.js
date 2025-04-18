@@ -64,15 +64,6 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-
-app.set("trust proxy", 1);
-const originalCreate = prisma.session.create;
-prisma.session.create = (...args) => {
-  console.log("Creating session with data:", JSON.stringify(args, null, 2));
-  return originalCreate.apply(prisma.session, args);
-};
-
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -95,10 +86,6 @@ app.use(
     },
   })
 );
-app.use((req, res, next) => {
-  console.log("Session object:", req.session);
-  next();
-});
 
 app.use(passport.initialize());
 app.use(passport.session());
