@@ -84,7 +84,7 @@ app.use(
       fields: {
         id: "sid",
         data: "data",
-        expires: "expires",
+        expires: "expiresAt",
       },
     
     }),
