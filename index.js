@@ -12,8 +12,10 @@ const dashboardRoutes = require("./routes/dashboard");
 const path = require("path");
 const folderRoutes = require("./routes/folders");
 const fileRoutes = require("./routes/files");
-
 const app = express();
+app.use(express.static("public"));
+app.set("views", path.join(__dirname, "views"))
+
 const prisma = new PrismaClient();
 
 app.use((req, res, next) => {
@@ -76,7 +78,6 @@ app.use(
         data: "data",
         expires: "expiresAt",
       },
-    
     }),
     cookie: {
       secure: process.env.NODE_ENV === "production",
@@ -85,6 +86,7 @@ app.use(
     },
   })
 );
+console.log("DATABASE_URL:", process.env.DATABASE_URL);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -95,6 +97,9 @@ app.get("/", (req, res) => {
 
 app.use("/folders", folderRoutes);
 app.use("/files", fileRoutes);
+app.get("/home", (req, res) => {
+  res.render("home"); // This assumes your home.ejs is in the "views" folder
+});
 
 app.set("view engine", "ejs");
 app.use("/", authRoutes);
@@ -109,6 +114,7 @@ app._router.stack.forEach((middleware) => {
     console.log(middleware.route.path, middleware.route.methods);
   }
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
