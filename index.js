@@ -92,7 +92,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get("/", (req, res) => {
-  res.redirect("/register");
+  res.redirect("/home");
 });
 
 app.use("/folders", folderRoutes);
