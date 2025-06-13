@@ -41,18 +41,29 @@ router.get("/login", (req, res) => {
   res.render("login");
 });
 
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    failureRedirect: "/login",
-  }),
-  (req, res) => {
-    console.log("logged in:", req.user);
-    req.session.save(() => {
-      res.redirect("/dashboard");
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      console.error("Error during login:", err);
+      return res.status(500).send("An error occurred during login");
+    }
+
+    if (!user) {
+      console.log("Login failed:", info.message);
+      return res.status(401).send(info.message);
+    }
+
+    req.logIn(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      console.log("logged in:", req.user);
+      req.session.save(() => {
+        res.redirect("/dashboard");
+      });
     });
-  }
-);
+  })(req, res, next);
+});
 
 router.post("/logout", (req, res, next) => {
   req.logout((err) => {
