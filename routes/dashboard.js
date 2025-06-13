@@ -7,11 +7,10 @@ const prisma = new PrismaClient();
 const { createClient } = require("@supabase/supabase-js");
 const fs = require("fs");
 const path = require("path");
-const { isAscii } = require("buffer");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 function isAuthenticated(req, res, next) {
@@ -21,7 +20,7 @@ function isAuthenticated(req, res, next) {
   res.redirect("/login");
 }
 
-router.get("/",isAuthenticated, async (req, res) => {
+router.get("/", isAuthenticated, async (req, res) => {
   try {
     console.log("req.user:", req.user);
 

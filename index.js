@@ -15,7 +15,8 @@ const fileRoutes = require("./routes/files");
 const app = express();
 app.use(express.static("public"));
 app.set("views", path.join(__dirname, "views"))
-
+const flash = require("connect-flash");
+const { nextTick } = require("process");
 const prisma = new PrismaClient();
 
 app.use((req, res, next) => {
@@ -115,7 +116,12 @@ app._router.stack.forEach((middleware) => {
   }
 });
 
-
+app.use(flash())
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+})
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
