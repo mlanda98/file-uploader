@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const { uploadToDisk } = require("../multer");
 const router = express.Router();
