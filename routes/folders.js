@@ -13,6 +13,7 @@ const supabase = createClient(
 );
 
 router.post("/", async (req, res) => {
+  const start = Date.now();
   const { name } = req.body;
   try {
     const folder = await prisma.folder.create({
@@ -67,6 +68,7 @@ router.delete("/folder/:id/delete", async (req, res) => {
     }
 
     const filePaths = folder.files.map((file) => file.path);
+
     const { error } = await supabase.storage.from("uploads").remove(filePaths);
 
     await prisma.file.deleteMany({

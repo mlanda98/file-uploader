@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const router = express.Router();
-const { uploadToDisk } = require("../multer");
+const { uploadToDisk, uploadToMemory } = require("../multer");
 const path = require("path");
 const prisma = new PrismaClient();
 const { createClient } = require("@supabase/supabase-js");
@@ -15,7 +15,7 @@ const supabase = createClient(
 
 router.post(
   "/:folderId/files",
-  uploadToDisk.single("file"),
+  uploadToMemory.single("file"),
   async (req, res) => {
     const { folderId } = req.params;
     console.log("Folder ID:", folderId); // Check folderId
@@ -137,11 +137,9 @@ router.get("/file/:fileId/details", async (req, res) => {
       return res.status(404).send("File not found");
     }
 
-    const { data } = supabase.storage
-      .from("uploads")
-      .getPublicUrl(file.path);
+    const { data } = supabase.storage.from("uploads").getPublicUrl(file.path);
 
-      const publicUrl = data?.publicUrl;
+    const publicUrl = data?.publicUrl;
 
     if (!publicUrl) {
       return res.status(500).send("Error generating url");
@@ -168,7 +166,7 @@ router.get("/file/:fileId/download", async (req, res) => {
       return res.status(404).send("File not found");
     }
 
-    const { data: publicUrlData, error} = supabase.storage
+    const { data: publicUrlData, error } = supabase.storage
       .from("uploads")
       .getPublicUrl(file.path);
 
