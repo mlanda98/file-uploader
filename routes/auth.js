@@ -37,7 +37,7 @@ router.post("/register", async (req, res) => {
 
 router.post("/guest-login", (req, res, next) => {
   req.body.username = "guest";
-  req.body.password = "guestpass";
+  req.body.password = "guestcode";
 
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
