@@ -14,8 +14,7 @@ const folderRoutes = require("./routes/folders");
 const fileRoutes = require("./routes/files");
 const app = express();
 app.use(express.static("public"));
-app.set("views", path.join(__dirname, "views"))
-const { nextTick } = require("process");
+app.set("views", path.join(__dirname, "views"));
 const prisma = new PrismaClient();
 
 app.use((req, res, next) => {

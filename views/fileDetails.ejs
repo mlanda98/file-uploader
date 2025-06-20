@@ -5,21 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>File Details</title>
     <link href="/styles.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body>
-    <h1>File Details</h1>
-    <p><strong>Name:</strong> <%= file.originalName %></p>
-    <p><strong>Size:</strong> <%= (file.size / 1024).toFixed(2) %> KB</p>
-    <p>
-      <strong>Uploaded At:</strong> <%= new
-      Date(file.createdAt).toLocaleString() %>
-    </p>
+  <body
+    class="min-h-screen bg-gradient-to-br from-sky-200 via-blue-100 to-sky-300 bg-[length:400%_400%] animate-gradient font-sans sm:bg[length:400%_400%] sm:animate-gradient"
+  >
+    <header class="bg-transparent p-4">
+      <div
+        class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between sm:px-6 text-xl font-semibold gap-4"
+      >
+        <div class="flex items-center gap-4">
+          <img
+            src="/images/logo.png"
+            alt="Logo"
+            class="h-16 w-16 sm:h-24 sm:w-24 mr-3"
+          />
+          <h1 class="text-2xl sm:text-4xl font-bold text-blue-800">
+            UploadStack
+          </h1>
+          </div>
 
-    <h2>Actions</h2>
-    <a href="<%= publicUrl %>" download="<%= file.originalName %>">
-      <button>Download</button>
-    </a>
-    <br /><br />
-    <a href="/dashboard">Back to Dashboard</a>
+          <a
+            href="/dashboard"
+            class="text-blue-700 hover:underline font-semibold whitespace-nowrap"
+            >← Back to Dashboard
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex justify-center px-2 py-4 sm:px-6">
+      <div class="w-full max-w-3xl mx-auto bg-white p-6 rounded-lg shadow">
+        <h1 class="text-3xl font-bold text-blue-800 mb-6 text-center">
+          File Details
+        </h1>
+
+        <div class="space-y-4 text-blue-900">
+          <p><strong>Name:</strong> <%= file.originalName %></p>
+          <p><strong>Size:</strong> <%= (file.size / 1024).toFixed(2) %> KB</p>
+          <p>
+            <strong>Uploaded At:</strong> <%= new
+            Date(file.createdAt).toLocaleString() %>
+          </p>
+        </div>
+
+        <section class="mt-8 flex justify-center gap-4">
+          <a href="<%= publicUrl %>" download="<%= file.originalName %>">
+            <button
+              class="bg-blue-700 w-full text-white px-4 py-2 rounded hover:bg-blue-800 transition"
+            >
+              Download
+            </button>
+          </a>
+        </section>
+      </div>
+    </main>
   </body>
 </html>
