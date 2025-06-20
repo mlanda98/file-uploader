@@ -1,6 +1,6 @@
 # File Uploader - UploadStack
 
-A responsive web-based file storage service inspired by Google Drive, built with Node.js, Express, Prisma, and Passport.js. This application allows users to register or log in (including as a guest), create folders, upload files, and manage their content — with cloud storage via Supabase and secure backend data stored in PostgreSQL on Railway.
+A responsive full stack file storage service inspired by Google Drive, built with Node.js, Express, Prisma, and Passport.js. This application allows users to register or log in (including as a guest), create folders, upload files, and manage their content — with cloud storage via Supabase and secure backend data stored in PostgreSQL on Railway.
 
 ---
 
