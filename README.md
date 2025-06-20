@@ -6,7 +6,7 @@ A responsive web-based file storage service inspired by Google Drive, built with
 
 🔗 Links
 
-- [Live Demo]()
+- [Live Demo](file-uploader-production-d3b1.up.railway.app)
 - [Repository](https://github.com/mlanda98/file-uploader)
 
 ---
@@ -26,6 +26,7 @@ A responsive web-based file storage service inspired by Google Drive, built with
 ---
 
 🛠️ Tech Stack
+
 - Backend: Node.js, Express
 - Authentication: Passport.js (session-based)
 - ORM: Prisma
@@ -33,7 +34,7 @@ A responsive web-based file storage service inspired by Google Drive, built with
 - File Storage: Supabase Storage
 - Middleware: Multer for handling file uploads
 - Session Store: Prisma Session Store
-- Frontend: EJS 
+- Frontend: EJS
 - Deployment: Railway
 
 ---
@@ -46,13 +47,13 @@ A responsive web-based file storage service inspired by Google Drive, built with
 - cd file-uploader
 - run `npm install`
 - set up environment variables:
-  ````
+  ```
   DATABASE_URL="your_railway_postgres_url"
   SESSION_SECRET="your_secure_session_secret"
   SUPABASE_URL="https://your-supabase-project.supabase.co"
   SUPABASE_KEY="your-supabase-service-role-key"
   SUPABASE_SERVICE_ROLE_KEY="your-supabase-service-role-key"
-  ````
+  ```
 - run migrations: `npx prisma migrate dev --name init`
 - Run the development server: `npm run dev`
 - Visit `http://localhost:3000`
