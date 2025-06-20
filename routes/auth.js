@@ -5,6 +5,8 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 const { resolveInclude } = require("ejs");
+const { info } = require("autoprefixer");
+const e = require("connect-flash");
 
 const prisma = new PrismaClient();
 
@@ -33,6 +35,20 @@ router.post("/register", async (req, res) => {
   }
 });
 
+router.post("/guest-login", (req, res, next) => {
+  req.body.username = "guest";
+  req.body.password = "guestpass";
+
+  passport.authenticate("local", (err, user, info) => {
+    if (err) return next(err);
+    if (!user) return res.redirect("/login");
+
+    req.logIn(user, (err) => {
+      if (err) return next(err);
+      res.redirect("/dashboard");
+    });
+  })(req, res, next);
+});
 router.get("/register", (req, res) => {
   res.render("register");
 });

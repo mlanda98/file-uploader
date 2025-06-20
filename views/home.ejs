@@ -32,18 +32,27 @@
         <h1 class="text-2xl sm:text-3xl font-bold text-blue-800 mb-6">
           Stack it. Store it. Relax.
         </h1>
-        <div class="flex justify-center gap-4 flex-wrap">
+        <div class="flex flex-col items-center sm:items-stetch gap-4">
           <a
             href="/register"
-            class="bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transform duration-300 hover:scale-105 hover:bg-blue-800 transition cursor-pointer sm:px-5 sm:py-2"
+            class="bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transform duration-300 hover:scale-105 hover:bg-blue-800 transition cursor-pointer sm:px-5 sm:py-2 w-full"
           >
             Register
           </a>
           <a
             href="/login"
-            class="bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transform duration-300 hover:scale-105 transition cursor-pointer sm:px-5 sm:py-2"
+            class="bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transform duration-300 hover:scale-105 hover:bg-blue-800 transition cursor-pointer sm:px-5 sm:py-2 w-full"
             >Sign In</a
           >
+
+          <form action="/guest-login" method="POST" class="w-full">
+            <button
+              type="submit"
+              class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 shadow-md transform transition duration-300 hover:scale-105 cursor-pointer sm:px-5 sm:py-2 w-full"
+            >
+              Login as Guest
+            </button>
+          </form>
         </div>
       </div>
     </main>
