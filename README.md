@@ -6,7 +6,7 @@ A responsive full stack file storage service inspired by Google Drive, built wit
 
 🔗 Links
 
-- [Live Demo](file-uploader-production-d3b1.up.railway.app)
+- [Live Demo](https://file-uploader-production-d3b1.up.railway.app)
 - [Repository](https://github.com/mlanda98/file-uploader)
 
 ---
